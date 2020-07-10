@@ -1,0 +1,7 @@
+{
+  "db-host-platform": "api_socket_io_chat_db_host_platform",
+  "db-host": "api_socket_io_chat_db_host",
+  "db-user": "api_socket_io_chat_db_user",
+  "db-password": "api_socket_io_chat_db_password",
+  "db-name": "api_socket_io_chat_db_name"
+}
