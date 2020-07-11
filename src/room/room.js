@@ -5,15 +5,15 @@ const buildMakeRoom = ({ textSanitizer }) => {
     }
     title = textSanitizer(title);
 
-    if (!admins || Array.isArray(admins) || admins.length < 1) {
+    if (!admins || !Array.isArray(admins) || admins.length < 1) {
       throw new Error("Room must have an admin.");
     }
 
-    if (!members || Array.isArray(members)) {
+    if (!members || !Array.isArray(members)) {
       throw new Error("Room must have an admin.");
     }
 
-    if (!messages || Array.isArray(messages)) {
+    if (!messages || !Array.isArray(messages)) {
       throw new Error("Room must have an admin.");
     }
 
@@ -64,13 +64,20 @@ const buildMakeRoom = ({ textSanitizer }) => {
         throw new Error("Not Functional.");
       },
       addMessage: ({ message }) => {
+        if (!message) {
+          throw new Error("Message must be provided.");
+        }
+        console.log(
+          "room add msg",
+          message,
+          members,
+          message.senderId,
+          !members.includes(message.senderId)
+        );
         if (!members.includes(message.senderId)) {
           throw new Error(
             "Action Prohibited: Not authorised as a member of the room."
           );
-        }
-        if (!message) {
-          throw new Error("Message must be provided.");
         }
         messages.push(message);
       },

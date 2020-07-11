@@ -12,27 +12,22 @@ const makeSendMessage = ({ roomDb }) => {
         message: `No such room exists.`,
       };
     }
+    console.log("Room exists", existingRoom);
     const room = makeRoom({ ...existingRoom });
-    const message = makeMessage({ roomId, senderId, text });
-    room.addMessage(message);
+    console.log(roomId, senderId, text);
+    const message = makeMessage({ roomId, senderId, text }).makeObj();
+    console.log("usercase", message);
+    room.addMessage({ message });
     await roomDb.addMessageToRoom({
       title: roomId,
-      message: {
-        text: message.getText(),
-        timestamp: message.getTimestamp(),
-        senderId: message.getSenderId(),
-        roomId: message.getRoomId(),
-      },
+      message,
     });
 
     return {
       ok: true,
       message: `Message sent successfully.`,
       data: {
-        text: message.getText(),
-        timestamp: message.getTimestamp(),
-        senderId: message.getSenderId(),
-        roomId: message.getRoomId(),
+        ...message,
       },
     };
   };

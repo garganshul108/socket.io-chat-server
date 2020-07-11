@@ -12,7 +12,7 @@ const buildMakeMessage = ({ textSanitizer }) => {
       throw new Error("Message must have a sender username");
     }
 
-    const timestamp = timestamp || Date.now();
+    timestamp = timestamp || new Date().toUTCString();
     text = textSanitizer(text);
 
     const deletedText = "**This message has been deleted**";
@@ -25,6 +25,14 @@ const buildMakeMessage = ({ textSanitizer }) => {
       isDeleted: () => text === deletedText,
       delete: () => {
         text = deletedText;
+      },
+      makeObj: () => {
+        return {
+          text,
+          roomId,
+          senderId,
+          timestamp,
+        };
       },
     });
   };

@@ -18,7 +18,7 @@ const makeRoomDb = ({ makeDb }) => {
     const result = await db.collection("room").findOne({ title });
     // console.log(result);
     if (!result) return null;
-    LOG.core(result);
+    LOG.core("Roomdb ", result);
     const info = { ...result };
     return info;
   };
@@ -43,12 +43,24 @@ const makeRoomDb = ({ makeDb }) => {
     return info;
   };
 
+  const addMessageToRoom = async ({ title, message }) => {
+    LOG.core("DATAACCESS: addMessageToRoom Called");
+
+    const db = await makeDb();
+    const result = await db
+      .collection("room")
+      .updateOne({ title }, { $push: { messages: message } });
+
+    return result.modifiedCount > 0 ? { ...message } : null;
+  };
+
   return Object.freeze({
     findAll,
     findByTitle,
     insert,
     remove,
     update,
+    addMessageToRoom,
   });
 };
 
