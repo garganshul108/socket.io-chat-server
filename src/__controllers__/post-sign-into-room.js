@@ -1,6 +1,6 @@
 const makePostSignIntoRoom = ({ signIntoRoom }) => {
   const postSignIntoRoom = async (httpRequest) => {
-    LOG.core("CONTROLLER: postRoom Called");
+    LOG.core("CONTROLLER: postSignIntoRoom Called");
 
     try {
       // extract data from httpRequest.body
@@ -9,6 +9,7 @@ const makePostSignIntoRoom = ({ signIntoRoom }) => {
 
       const title = httpRequest.body.title;
       const member = httpRequest.body.member;
+      console.log("bdy http", httpRequest.body);
       const posted = await signIntoRoom({ title, member });
       if (posted.ok) {
         return {

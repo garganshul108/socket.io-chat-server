@@ -9,14 +9,25 @@ const makePostSignup = ({ addUser }) => {
       const username = httpRequest.body.username;
       const password = httpRequest.body.password;
       const posted = await addUser({ username, password });
-      return {
-        headers: {
-          "Content-Type": "application/json",
-          "Last-Modified": new Date().toUTCString(),
-        },
-        statusCode: 201,
-        body: { posted },
-      };
+      if (posted.ok) {
+        return {
+          headers: {
+            "Content-Type": "application/json",
+            "Last-Modified": new Date().toUTCString(),
+          },
+          statusCode: 201,
+          body: { ...posted },
+        };
+      } else {
+        return {
+          headers: {
+            "Content-Type": "application/json",
+            "Last-Modified": new Date().toUTCString(),
+          },
+          statusCode: posted.statusCode || 400,
+          body: { ...posted },
+        };
+      }
     } catch (err) {
       console.log(err);
       return {
