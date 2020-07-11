@@ -43,6 +43,8 @@ server.listen(PORT, () => {
  */
 
 const io = socketIO(server);
+const makeMessage = require("./src/message");
+const SBSendMessage = require("./src/__socket-controllers__/sb-send-message");
 
 const onMessage = (payload) => console.log("Message triggered.", payload);
 const onNewConnection = (payload) => console.log(`New user joined.`, payload);
@@ -54,9 +56,41 @@ const onDisconnection = (payload) =>
 io.on("connection", (socket) => {
   onNewConnection();
   socket.on("disconnect", (payload) => onDisconnection(payload));
-  socket.on("joining-room", (payload) => onJoiningRoom(payload));
-  socket.on("message", (payload) => {
-    onMessage(payload);
-    io.emit("message", { text: payload.message, sender: payload.username });
+  socket.on("joining-room", (payload) => {
+    const { username, roomId } = payload;
+    socket.join(roomId);
+    io.to(roomId).emit(
+      "message",
+      makeMessage({
+        text: `${username} has joined the room.`,
+        senderId: "chat-bot",
+        roomId,
+      }).makeObj()
+    );
+    onJoiningRoom(payload);
+  });
+  socket.on("message", async (payload) => {
+    const { text, username, roomId } = payload;
+    console.log(text);
+    const message = await SBSendMessage({
+      text,
+      senderId: username,
+      roomId,
+    });
+    if (message.ok) {
+      const sendingPacket = { ...message.data.data };
+      console.log(sendingPacket);
+      io.to(roomId).emit("message", sendingPacket);
+      onMessage(payload);
+    } else {
+      socket.emit(
+        "message",
+        makeMessage({
+          text: `Your message failed to deliver.`,
+          senderId: "chat-bot",
+          roomId,
+        }).makeObj()
+      );
+    }
   });
 });
