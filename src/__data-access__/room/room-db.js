@@ -54,6 +54,17 @@ const makeRoomDb = ({ makeDb }) => {
     return result.modifiedCount > 0 ? { ...message } : null;
   };
 
+  const addMemberToRoom = async ({ title, member }) => {
+    LOG.core("DATAACCESS: addMemberToRoom Called");
+
+    const db = await makeDb();
+    const result = await db
+      .collection("room")
+      .updateOne({ title }, { $push: { members: member } });
+
+    return result.modifiedCount > 0 ? { ...member } : null;
+  };
+
   return Object.freeze({
     findAll,
     findByTitle,
@@ -61,6 +72,7 @@ const makeRoomDb = ({ makeDb }) => {
     remove,
     update,
     addMessageToRoom,
+    addMemberToRoom,
   });
 };
 

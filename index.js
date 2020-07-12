@@ -45,6 +45,21 @@ server.listen(PORT, () => {
 const io = socketIO(server);
 const makeMessage = require("./src/message");
 const SBSendMessage = require("./src/__socket-controllers__/sb-send-message");
+const SBAddMember = require("./src/__socket-controllers__/sb-add-member");
+
+const botMessage = ({
+  roomId,
+  botId = "chat-bot",
+  text,
+  timestamp = new Date().toUTCString(),
+}) => {
+  return {
+    roomId,
+    text,
+    senderId: botId,
+    timestamp,
+  };
+};
 
 const onMessage = (payload) => console.log("Message triggered.", payload);
 const onNewConnection = (payload) => console.log(`New user joined.`, payload);
@@ -59,16 +74,46 @@ io.on("connection", (socket) => {
   socket.on("joining-room", (payload) => {
     const { username, roomId } = payload;
     socket.join(roomId);
-    io.to(roomId).emit(
-      "message",
-      makeMessage({
-        text: `${username} has joined the room.`,
-        senderId: "chat-bot",
-        roomId,
-      }).makeObj()
-    );
+    io.to(roomId).emit("alert", {
+      text: `${username} has joined the room.`,
+      roomId,
+      timestamp: new Date().toUTCString(),
+    });
     onJoiningRoom(payload);
   });
+
+  socket.on("alert", (payload) => {
+    const { text, roomId } = payload;
+    io.to(roomId).emit("alert", {
+      text,
+      roomId,
+    });
+  });
+
+  socket.on("add-member", async (payload) => {
+    console.log(payload);
+    const { admin, member, roomId } = payload;
+    const status = await SBAddMember({
+      admin,
+      member,
+      roomId,
+    });
+    if (status.ok) {
+      io.to(roomId).emit("alert", {
+        timestamp: new Date().toUTCString(),
+        text: `${member} is added as a member`,
+        roomId,
+      });
+    } else {
+      socket.emit("alert", {
+        timestamp: new Date().toUTCString(),
+        text:
+          "Action Prohibited:\n1. Maybe you are not admin.\n2. Maybe member is not signed up.\n3.Try Again.",
+        roomId,
+      });
+    }
+  });
+
   socket.on("message", async (payload) => {
     const { text, username, roomId } = payload;
     console.log(text);
@@ -83,14 +128,11 @@ io.on("connection", (socket) => {
       io.to(roomId).emit("message", sendingPacket);
       onMessage(payload);
     } else {
-      socket.emit(
-        "message",
-        makeMessage({
-          text: `Your message failed to deliver.`,
-          senderId: "chat-bot",
-          roomId,
-        }).makeObj()
-      );
+      socket.emit("alert", {
+        timestamp: new Date().toUTCString(),
+        text: "Your message failed to deliver.",
+        roomId,
+      });
     }
   });
 });
