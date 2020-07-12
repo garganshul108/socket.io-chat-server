@@ -7,19 +7,23 @@ const makeSBAddMember = ({ addMember }) => {
       // check express callback handler for this
       // return status based http responsifiable object
       // console.log(text);
-      const messageSent = await addMember({ roomId, admin, member });
+      const { ok, statusCode, ...messageSent } = await addMember({
+        roomId,
+        admin,
+        member,
+      });
       return {
-        ok: true,
+        ok,
         data: {
           ...messageSent,
         },
       };
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return {
         ok: false,
         data: {
-          ...err,
+          error: err.message,
         },
       };
     }

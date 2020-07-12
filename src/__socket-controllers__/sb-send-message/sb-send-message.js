@@ -6,19 +6,21 @@ const makeSBSendMessage = ({ sendMessage }) => {
       // extract data from httpRequest.body
       // check express callback handler for this
       // return status based http responsifiable object
-      console.log(text);
-      const messageSent = await sendMessage({ roomId, senderId, text });
+      // console.log(text);
+      const { ok, statusCode, ...messageSent } = await sendMessage({
+        roomId,
+        senderId,
+        text,
+      });
       return {
-        ok: true,
-        data: {
-          ...messageSent,
-        },
+        ok,
+        ...messageSent,
       };
     } catch (err) {
       return {
         ok: false,
         data: {
-          ...err,
+          error: err.message,
         },
       };
     }

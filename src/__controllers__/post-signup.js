@@ -8,8 +8,11 @@ const makePostSignup = ({ addUser }) => {
 
       const username = httpRequest.body.username;
       const password = httpRequest.body.password;
-      const posted = await addUser({ username, password });
-      if (posted.ok) {
+      const { ok, statusCode, ...posted } = await addUser({
+        username,
+        password,
+      });
+      if (ok) {
         return {
           headers: {
             "Content-Type": "application/json",
@@ -22,21 +25,20 @@ const makePostSignup = ({ addUser }) => {
         return {
           headers: {
             "Content-Type": "application/json",
-            "Last-Modified": new Date().toUTCString(),
           },
-          statusCode: posted.statusCode || 400,
+          statusCode: statusCode || 400,
           body: { ...posted },
         };
       }
     } catch (err) {
-      console.log(err);
+      // LOG.core(err);
       return {
         headers: {
           "Content-Type": "application/json",
         },
         statusCode: 400,
         body: {
-          error: e.message,
+          error: err.message,
         },
       };
     }

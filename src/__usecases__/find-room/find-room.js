@@ -9,10 +9,7 @@ const makeFindRoom = ({ roomDb }) => {
     const existingRoom = await roomDb.findByTitle({ title });
 
     if (!existingRoom) {
-      return {
-        ok: false,
-        message: `No room with ${title} exists.`,
-      };
+      throw new Error(`No room with ${title} exists.`);
     }
 
     return {

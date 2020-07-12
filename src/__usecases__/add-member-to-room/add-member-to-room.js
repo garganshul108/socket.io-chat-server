@@ -8,10 +8,7 @@ const makeAddMemberToRoom = ({ roomDb, userDb }) => {
 
     const existingRoom = await roomDb.findByTitle({ title: roomId });
     if (!existingRoom) {
-      return {
-        ok: false,
-        message: `No Room as ${roomId} exists.`,
-      };
+      throw new Error(`No Room as ${roomId} exists.`);
     }
 
     const room = makeRoom({ ...existingRoom });
@@ -21,7 +18,7 @@ const makeAddMemberToRoom = ({ roomDb, userDb }) => {
       ok: true,
       message: `Member added successfully.`,
       data: {
-        member,
+        ...member,
       },
     };
   };

@@ -91,14 +91,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add-member", async (payload) => {
-    console.log(payload);
+    // console.log(payload);
     const { admin, member, roomId } = payload;
-    const status = await SBAddMember({
+    const { ok } = await SBAddMember({
       admin,
       member,
       roomId,
     });
-    if (status.ok) {
+    if (ok) {
       io.to(roomId).emit("alert", {
         timestamp: new Date().toUTCString(),
         text: `${member} is added as a member`,
@@ -116,15 +116,16 @@ io.on("connection", (socket) => {
 
   socket.on("message", async (payload) => {
     const { text, username, roomId } = payload;
-    console.log(text);
-    const message = await SBSendMessage({
+    // console.log(text);
+    const { ok, data } = await SBSendMessage({
       text,
       senderId: username,
       roomId,
     });
-    if (message.ok) {
-      const sendingPacket = { ...message.data.data };
-      console.log(sendingPacket);
+    // console.log("INDEX", data);
+    if (ok) {
+      const sendingPacket = { ...data };
+      // console.log(sendingPacket);
       io.to(roomId).emit("message", sendingPacket);
       onMessage(payload);
     } else {

@@ -19,6 +19,7 @@ module.exports = function makeExpressCallback(controller) {
           res.set(httpResponse.headers);
         }
         res.type("json");
+
         res.status(httpResponse.statusCode).send(httpResponse.body);
       })
       .catch((e) =>

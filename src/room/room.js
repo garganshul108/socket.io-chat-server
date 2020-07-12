@@ -67,13 +67,13 @@ const buildMakeRoom = ({ textSanitizer }) => {
         if (!message) {
           throw new Error("Message must be provided.");
         }
-        console.log(
-          "room add msg",
-          message,
-          members,
-          message.senderId,
-          !members.includes(message.senderId)
-        );
+        // console.log(
+        //   "room add msg",
+        //   message,
+        //   members,
+        //   message.senderId,
+        //   !members.includes(message.senderId)
+        // );
         if (!members.includes(message.senderId)) {
           throw new Error(
             "Action Prohibited: Not authorised as a member of the room."

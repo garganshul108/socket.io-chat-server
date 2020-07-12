@@ -14,17 +14,11 @@ const makeAddRoom = ({ roomDb, userDb }) => {
     const existingAdmin = await userDb.findByUsername({ username: admin });
 
     if (existingRoom) {
-      return {
-        ok: false,
-        message: `Room with title as '${title}' already exists.`,
-      };
+      throw new Error(`Room with title as '${title}' already exists.`);
     }
 
     if (!existingAdmin) {
-      return {
-        ok: false,
-        message: `No registered user with username as '${admin}' exists.`,
-      };
+      throw new Error(`No registered user with username as '${admin}' exists.`);
     }
 
     const inserted = await roomDb.insert({

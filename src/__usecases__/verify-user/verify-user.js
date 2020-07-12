@@ -8,27 +8,23 @@ const makeVerifyUser = ({ userDb }) => {
 
     const existingUser = await userDb.findByUsername({ username });
 
-    LOG.core(existingUser);
+    // LOG.core(existingUser);
     if (!existingUser) {
-      return {
-        ok: false,
-        message: `No user with ${username} exists.`,
-      };
+      throw new Error(`No user with ${username} exists.`);
     }
 
-    LOG.core(password, existingUser);
+    // LOG.core(password, existingUser);
     if (password === existingUser.password) {
       return {
         ok: true,
-        message: `User Exists.`,
+        message: `User Verified.`,
         data: {},
       };
     } else {
       return {
         ok: false,
         statusCode: 403,
-        message: `Invalid Username Password combination.`,
-        data: {},
+        error: `Invalid Username Password combination.`,
       };
     }
   };

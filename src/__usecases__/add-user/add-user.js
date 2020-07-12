@@ -8,10 +8,7 @@ const makeAddUser = ({ userDb }) => {
     const existing = await userDb.findByUsername({ username });
     // console.log(existing);
     if (existing) {
-      return {
-        ok: false,
-        message: `Username already exists.`,
-      };
+      throw new Error(`Username already exists.`);
     }
 
     const inserted = await userDb.insert({ username, password });

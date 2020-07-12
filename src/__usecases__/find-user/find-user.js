@@ -9,10 +9,7 @@ const makeFindUser = ({ userDb }) => {
     const existingUser = await userDb.findByUsername({ username });
 
     if (!existingUser) {
-      return {
-        ok: false,
-        message: `No user with ${username} exists.`,
-      };
+      throw new Error(`No user with ${username} exists.`);
     }
 
     return {

@@ -9,8 +9,8 @@ const makePostRoom = ({ addRoom }) => {
 
       const title = httpRequest.body.title;
       const admin = httpRequest.body.admin;
-      const posted = await addRoom({ title, admin });
-      if (posted.ok) {
+      const { ok, statusCode, ...posted } = await addRoom({ title, admin });
+      if (ok) {
         return {
           headers: {
             "Content-Type": "application/json",
@@ -25,19 +25,19 @@ const makePostRoom = ({ addRoom }) => {
             "Content-Type": "application/json",
             "Last-Modified": new Date().toUTCString(),
           },
-          statusCode: posted.statusCode || 400,
+          statusCode: statusCode || 400,
           body: { ...posted },
         };
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return {
         headers: {
           "Content-Type": "application/json",
         },
         statusCode: 400,
         body: {
-          error: e.message,
+          error: err.message,
         },
       };
     }

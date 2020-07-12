@@ -18,7 +18,7 @@ const makeRoomDb = ({ makeDb }) => {
     const result = await db.collection("room").findOne({ title });
     // console.log(result);
     if (!result) return null;
-    LOG.core("Roomdb ", result);
+    // LOG.core("Roomdb ", result);
     const info = { ...result };
     return info;
   };

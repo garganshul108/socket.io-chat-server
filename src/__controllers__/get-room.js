@@ -8,24 +8,34 @@ const makeGetRoom = ({ findRoom }) => {
       // return status based http responsifiable object
 
       const title = httpRequest.params.title;
-      const fetched = await findRoom({ title });
-      return {
-        headers: {
-          "Content-Type": "application/json",
-          "Last-Modified": new Date().toUTCString(),
-        },
-        statusCode: 200,
-        body: { fetched },
-      };
+      const { ok, statusCode, ...fetched } = await findRoom({ title });
+      if (ok) {
+        return {
+          headers: {
+            "Content-Type": "application/json",
+            "Last-Modified": new Date().toUTCString(),
+          },
+          statusCode: 200,
+          body: { ...fetched },
+        };
+      } else {
+        return {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          statusCode: statusCode || 200,
+          body: { ...fetched },
+        };
+      }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return {
         headers: {
           "Content-Type": "application/json",
         },
         statusCode: 400,
         body: {
-          error: e.message,
+          error: err.message,
         },
       };
     }

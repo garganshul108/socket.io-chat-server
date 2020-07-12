@@ -16,7 +16,7 @@ const makeUserDb = ({ makeDb }) => {
     const result = await db.collection("user").findOne({ username });
     // console.log(result);
     if (!result) return null;
-    LOG.core(result);
+    // LOG.core(result);
     const info = { ...result };
     return info;
   };

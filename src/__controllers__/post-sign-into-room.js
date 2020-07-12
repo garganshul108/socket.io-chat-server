@@ -10,8 +10,11 @@ const makePostSignIntoRoom = ({ signIntoRoom }) => {
       const title = httpRequest.body.title;
       const member = httpRequest.body.member;
       console.log("bdy http", httpRequest.body);
-      const posted = await signIntoRoom({ title, member });
-      if (posted.ok) {
+      const { ok, statusCode, ...posted } = await signIntoRoom({
+        title,
+        member,
+      });
+      if (ok) {
         return {
           headers: {
             "Content-Type": "application/json",
@@ -26,19 +29,19 @@ const makePostSignIntoRoom = ({ signIntoRoom }) => {
             "Content-Type": "application/json",
             "Last-Modified": new Date().toUTCString(),
           },
-          statusCode: posted.statusCode || 400,
+          statusCode: statusCode || 400,
           body: { ...posted },
         };
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return {
         headers: {
           "Content-Type": "application/json",
         },
         statusCode: 400,
         body: {
-          error: e.message,
+          error: err.message,
         },
       };
     }

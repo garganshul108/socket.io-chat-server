@@ -9,14 +9,17 @@ const makePostLogin = ({ verifyUser }) => {
 
       const username = httpRequest.body.username;
       const password = httpRequest.body.password;
-      const posted = await verifyUser({ username, password });
-      if (posted.ok) {
+      const { ok, statusCode, ...posted } = await verifyUser({
+        username,
+        password,
+      });
+      if (ok) {
         return {
           headers: {
             "Content-Type": "application/json",
             "Last-Modified": new Date().toUTCString(),
           },
-          statusCode: posted.statusCode || 201,
+          statusCode: 201,
           body: { ...posted },
         };
       } else {
@@ -25,19 +28,19 @@ const makePostLogin = ({ verifyUser }) => {
             "Content-Type": "application/json",
             "Last-Modified": new Date().toUTCString(),
           },
-          statusCode: posted.statusCode || 400,
+          statusCode: statusCode || 400,
           body: { ...posted },
         };
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return {
         headers: {
           "Content-Type": "application/json",
         },
         statusCode: 400,
         body: {
-          error: e.message,
+          error: err.message,
         },
       };
     }

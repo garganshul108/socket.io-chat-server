@@ -3,18 +3,15 @@ const makeSignIntoRoom = ({ roomDb }) => {
     LOG.core("USECASE: signIntoRoom called.");
     const existing = await roomDb.findByTitle({ title });
     if (!existing) {
-      console.log(`No room with title as ${title} exists.`);
-      return {
-        ok: false,
-        message: `No room with title as ${title} exists.`,
-      };
+      // console.log(`No room with title as ${title} exists.`);
+      throw new Error(`No room with title as ${title} exists.`);
     }
 
     if (!existing.members.includes(member)) {
       return {
         ok: false,
         statusCode: 403,
-        message: `Not an autorised member.`,
+        error: `Not an autorised member.`,
       };
     }
 
