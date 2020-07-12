@@ -15,7 +15,6 @@ const makeSBSendMessage = ({ sendMessage }) => {
         },
       };
     } catch (err) {
-      console.log(err);
       return {
         ok: false,
         data: {
